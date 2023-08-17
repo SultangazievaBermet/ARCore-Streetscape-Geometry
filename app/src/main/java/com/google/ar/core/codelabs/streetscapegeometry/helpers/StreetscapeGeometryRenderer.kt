@@ -30,12 +30,8 @@ import com.google.ar.core.examples.java.common.samplerender.VertexBuffer
 class StreetscapeGeometryRenderer(val activity: StreetscapeGeometryActivity) {
   private val streetscapeGeometryToMeshes = hashMapOf<StreetscapeGeometry, Mesh>()
 
-  // Streetscape geometry.
-  private val wallsColor = listOf(
-    floatArrayOf(0.5f, 0.0f, 0.5f, 0.8f),
-    floatArrayOf(0.0f, 0.5f, 0.0f, 0.8f),
-    floatArrayOf(0.0f, 0.5f, 0.5f, 0.8f)
-  )
+  private val wallsColor  = floatArrayOf(0.0f, 0.0f, 0.7f, 0.8f)
+  private val landColor = floatArrayOf(0.5f, 0.5f, 0.0f, 0.8f)
 
   private lateinit var streetscapeGeometryTerrainShader: Shader
   private lateinit var streetscapeGeometryBuildingShader: Shader
@@ -71,7 +67,7 @@ class StreetscapeGeometryRenderer(val activity: StreetscapeGeometryActivity) {
     val modelViewProjectionMatrix = activity.renderer.modelViewProjectionMatrix
     val projectionMatrix = activity.renderer.projectionMatrix
     val modelViewMatrix = activity.renderer.modelViewMatrix
-    var index = 0
+
     updateStreetscapeGeometries(render, streetscapeGeometries)
     for ((streetscapeGeometry, mesh) in streetscapeGeometryToMeshes) {
       if (streetscapeGeometry.trackingState != TrackingState.TRACKING) {
@@ -80,23 +76,23 @@ class StreetscapeGeometryRenderer(val activity: StreetscapeGeometryActivity) {
       val pose = streetscapeGeometry.meshPose
       pose.toMatrix(modelMatrix, 0)
 
-      // Calculate model/view/projection matrices
       Matrix.multiplyMM(modelViewMatrix, 0, viewMatrix, 0, modelMatrix, 0)
       Matrix.multiplyMM(modelViewProjectionMatrix, 0, projectionMatrix, 0, modelViewMatrix, 0)
-      if (streetscapeGeometry.type == StreetscapeGeometry.Type.BUILDING) {
-        val color = wallsColor[index % wallsColor.size]
-        index += 1
-        streetscapeGeometryBuildingShader
-          .setVec4(
-            "u_Color", floatArrayOf( /* r= */color[0],  /* g= */
-                                     color[1],  /* b= */color[2], color[3]
-            )
-          )
-          .setMat4("u_ModelViewProjection", modelViewProjectionMatrix)
-        render.draw(mesh, streetscapeGeometryBuildingShader)
-      } else if (streetscapeGeometry.type == StreetscapeGeometry.Type.TERRAIN) {
+
+      // Fills buildings with the color
+
+//      if (streetscapeGeometry.type == StreetscapeGeometry.Type.BUILDING) {
+//        streetscapeGeometryBuildingShader
+//          .setVec4(
+//            "u_Color", wallsColor)
+//          .setMat4("u_ModelViewProjection", modelViewProjectionMatrix)
+//        render.draw(mesh, streetscapeGeometryBuildingShader)
+//      } else
+
+      // Fills terrain with the color
+      if (streetscapeGeometry.type == StreetscapeGeometry.Type.TERRAIN) {
         streetscapeGeometryTerrainShader
-          .setVec4("u_Color", floatArrayOf( /* r= */0f,  /* g= */.5f,  /* b= */0f, 0.3f))
+          .setVec4("u_Color", landColor)
           .setMat4("u_ModelViewProjection", modelViewProjectionMatrix)
         render.draw(mesh, streetscapeGeometryTerrainShader)
       }
@@ -128,7 +124,6 @@ class StreetscapeGeometryRenderer(val activity: StreetscapeGeometryActivity) {
   ) {
     for (streetscapeGeometry in streetscapeGeometries) {
       if (!streetscapeGeometryToMeshes.containsKey(streetscapeGeometry)) {
-        // Otherwise, we create a StreetscapeGeometry mesh and add it to the scene.
         val mesh = getSampleRenderMesh(render, streetscapeGeometry)
         streetscapeGeometryToMeshes[streetscapeGeometry] = mesh
       }

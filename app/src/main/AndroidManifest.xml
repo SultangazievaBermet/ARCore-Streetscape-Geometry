@@ -49,13 +49,12 @@
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
-    <!-- Indicates whether "Google Play Services for AR" (ARCore) is "required" or "optional". -->
     <meta-data
         android:name="com.google.ar.core"
         android:value="required" />
     <meta-data
         android:name="com.google.android.ar.API_KEY"
-        android:value="@string/GoogleCloudApiKey" />
+        android:value="AIzaSyBAnrEGaNFs31yEdzNsSrKi0XAtB0a_l_Y" />
 
   </application>
 

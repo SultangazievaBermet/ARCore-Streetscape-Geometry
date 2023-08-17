@@ -30,7 +30,6 @@ import com.google.ar.core.codelabs.streetscapegeometry.R
 import com.google.ar.core.codelabs.streetscapegeometry.StreetscapeCodelabRenderer
 import com.google.ar.core.codelabs.streetscapegeometry.StreetscapeGeometryActivity
 import com.google.ar.core.examples.java.common.helpers.SnackbarHelper
-import com.google.ar.core.examples.java.common.helpers.TapHelper
 
 
 /** Contains UI elements. */
@@ -38,9 +37,6 @@ class StreetscapeGeometryView(val activity: StreetscapeGeometryActivity) :
   DefaultLifecycleObserver {
   val root = View.inflate(activity, R.layout.activity_main, null)
   val surfaceView = root.findViewById<GLSurfaceView>(R.id.surfaceview)
-  val tapHelper = TapHelper(activity).also {
-    surfaceView.setOnTouchListener(it)
-  }
 
   val session
     get() = activity.arCoreSessionHelper.session
@@ -52,23 +48,6 @@ class StreetscapeGeometryView(val activity: StreetscapeGeometryActivity) :
       val popup = PopupMenu(activity, it)
       popup.setOnMenuItemClickListener { item ->
         when (item.itemId) {
-          R.id.placement_settings -> {
-            var selected = activity.renderer.placementMode
-            AlertDialog.Builder(activity)
-              .setTitle(R.string.settings)
-              .setSingleChoiceItems(
-                activity.resources.getStringArray(R.array.placementObjectOptions),
-                activity.renderer.placementMode.ordinal
-              ) { _, which ->
-                selected = StreetscapeCodelabRenderer.PlacementMode.values()[which]
-              }.setPositiveButton(R.string.done) { _, _ ->
-                activity.renderer.placementMode = selected
-              }
-              .setNegativeButton(R.string.cancel) { _, _ -> }
-              .show()
-            true
-          }
-
           R.id.visualization_settings -> {
             val options = booleanArrayOf(activity.renderer.showStreetscapeGeometry)
             AlertDialog.Builder(activity)
@@ -109,6 +88,14 @@ class StreetscapeGeometryView(val activity: StreetscapeGeometryActivity) :
           cameraGeospatialPose.heading,
           cameraGeospatialPose.headingAccuracy
         )
+
+      // stops filling the surface when the phone is looking to the South
+      if (cameraGeospatialPose != null && activity.renderer.showStreetscapeGeometry) {
+        activity.renderer.fillStreetscapeGeometry =
+          !(cameraGeospatialPose.heading > 135 && cameraGeospatialPose.heading < 180 ||
+                  cameraGeospatialPose.heading < -135 && cameraGeospatialPose.heading > -180)
+      }
+
       earthStatusText.text = activity.resources.getString(
         R.string.earth_state,
         earth.earthState.toString(),

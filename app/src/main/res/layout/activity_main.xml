@@ -44,12 +44,6 @@
       android:layout_alignParentBottom="true"
       tools:text="@string/streetscape_info" />
 
-  <View
-      android:layout_width="10dp"
-      android:layout_height="10dp"
-      android:background="@drawable/simple_reticle"
-      android:layout_centerInParent="true" />
-
   <ImageButton
       android:id="@+id/settingsButton"
       android:src="@drawable/ic_settings"

@@ -86,8 +86,7 @@ class StreetscapeGeometryActivity : AppCompatActivity() {
   fun configureSession(session: Session) {
     session.configure(session.config.apply {
       geospatialMode = Config.GeospatialMode.ENABLED
-      // TODO: Enable Streetscape Geometry
-
+      streetscapeGeometryMode = Config.StreetscapeGeometryMode.ENABLED
     })
   }
 
@@ -106,7 +105,6 @@ class StreetscapeGeometryActivity : AppCompatActivity() {
       )
         .show()
       if (!GeospatialPermissionsHelper.shouldShowRequestPermissionRationale(this)) {
-        // Permission denied with checking "Do not ask again".
         GeospatialPermissionsHelper.launchPermissionSettings(this)
       }
       finish()

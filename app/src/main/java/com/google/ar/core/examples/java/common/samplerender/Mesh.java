@@ -65,6 +65,10 @@ public class Mesh implements Closeable {
   private final IndexBuffer indexBuffer;
   private final VertexBuffer[] vertexBuffers;
 
+  int[] vertexIndices = {
+          0, 1, 2 // Indices of vertices for a single triangle
+  };
+
   /**
    * Construct a {@link Mesh}.
    *

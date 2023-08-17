@@ -16,7 +16,4 @@
   <item
       android:id="@+id/visualization_settings"
       android:title="Geometry Visualization" />
-  <item
-      android:id="@+id/placement_settings"
-      android:title="Object placement" />
 </menu>
